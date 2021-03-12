@@ -1,8 +1,8 @@
-import QtQuick 2.15
-import QtQuick.Window 2.15
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
-import QtQml 2.12
+import QtQuick
+import QtQuick.Window
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQml
 import TableModel
 
 ApplicationWindow {
@@ -84,6 +84,11 @@ ApplicationWindow {
             }
         }
 
+        HorizontalHeaderView{
+            id: horizontalHeader
+            syncView: tableView
+        }
+
         TableView{
             id: tableView
             width: root.width
@@ -92,19 +97,13 @@ ApplicationWindow {
             columnSpacing: 1
             rowSpacing: 1
             clip: true
+
             model: TableModel{id: tableModel}
             delegate: Rectangle{
                 implicitHeight: 20
                 implicitWidth: 150
                 border.width: 1
                 border.color: "grey"
-
-                Label{
-                    anchors.centerIn: parent
-                    font.pointSize: 8
-                    color: "red"
-                    text: model.Header
-                }
 
                 Label{
                     anchors.centerIn: parent

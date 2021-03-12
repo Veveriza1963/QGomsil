@@ -22,7 +22,7 @@ TableModel::TableModel(QObject *parent)
 QVariant TableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     (void) orientation;
-    if(role == Qt::UserRole){
+    if(role == Qt::DisplayRole){
         switch (section) {
             case 0: return QVariant("RowID");
             case 1: return QVariant("Data");
@@ -80,7 +80,6 @@ QHash<int, QByteArray> TableModel::roleNames() const
 {
     QHash<int, QByteArray> Roles;
     Roles[Qt::DisplayRole] = "Display";
-    Roles[Qt::UserRole] = "Header";
     return Roles;
 }
 
