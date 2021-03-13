@@ -38,7 +38,8 @@ signals:
 private:
     QString mMsgStatusBar;
     QStringList mTabelle;
-    uint32_t getNumeroRighe();
+    uint32_t getNumeroRighe(QString Where);
+    void getData();
 
 };
 

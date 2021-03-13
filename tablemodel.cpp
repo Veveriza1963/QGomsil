@@ -9,7 +9,8 @@ QSqlDatabase Db;
 QSqlTableModel *ptrTable;
 QSqlRecord Record;
 QString Tabella = "";
-QDate Data;
+QString Data;
+QString Filter;
 bool okConnesso = false;
 quint32 numeroRighe = 0;
 
@@ -17,6 +18,7 @@ TableModel::TableModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
     setMsgStatusBar("Connettere Database");
+    getData();
 }
 
 QVariant TableModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -58,20 +60,30 @@ int TableModel::columnCount(const QModelIndex &) const
 
 QVariant TableModel::data(const QModelIndex &index, int role) const
 {
-    switch (role) {
-        case Qt::DisplayRole:{
-            if(okConnesso){
-                ptrTable->setTable(Tabella);
-                ptrTable->setSort(0, Qt::DescendingOrder);
-                //Table.setFilter("Data = " + Data.toString("dd/MM/yyyy"));
-                ptrTable->select();
+    int IdxCol = index.column();
+    if(role == Qt::DisplayRole){
+        switch (IdxCol) {
+            case 0:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+            case 11:
+            case 12:
+            case 13:
                 Record = ptrTable->record(index.row());
-                if(Record.isEmpty()) return QString("No Data");
-                return Record.value(index.column());
-            }
-        }break;
-        default:
-            break;
+                return Record.value(IdxCol).toUInt();
+                break;
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                Record = ptrTable->record(index.row());
+                return Record.value(IdxCol).toString();
+                break;
+        }
     }
     return QVariant();
 }
@@ -122,16 +134,28 @@ void TableModel::initModel(QString T)
 {
     beginResetModel();
     Tabella.operator=(T);
-    numeroRighe = getNumeroRighe();
-    setMsgStatusBar("Numero Record Letti " + QString::number(numeroRighe));
     ptrTable = new QSqlTableModel();
+    ptrTable->setTable(Tabella);
+    ptrTable->setSort(0, Qt::DescendingOrder);
+    Filter = QString("Data = \"%1\"").arg(Data);
+    ptrTable->setFilter(Filter);
+    ptrTable->select();
+    numeroRighe = getNumeroRighe(Filter);
+    setMsgStatusBar("Numero Record Letti " + QString::number(numeroRighe));
     endResetModel();
 }
 
-uint32_t TableModel::getNumeroRighe()
+uint32_t TableModel::getNumeroRighe(QString Where)
 {
-    QString Sql = QString("Select Rowid From %1").arg(Tabella);
+    QString Sql = QString("Select Rowid From %1 Where %2").arg(Tabella).arg(Where);
     QSqlQuery Query;
     Query.exec(Sql);
     return Query.size();
+}
+
+void TableModel::getData()
+{
+    QDateTime Dt = QDateTime::currentDateTime();
+    QDate d = Dt.date();
+    Data.operator=(d.toString("dd/MM/yyyy"));
 }

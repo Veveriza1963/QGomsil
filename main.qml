@@ -7,7 +7,7 @@ import TableModel
 
 ApplicationWindow {
     id: root
-    x: 120; y: 20
+    x: 120; y: 40
     width: 1024; height: 768
     visible: true
     title: qsTr("QGomsil Tools")
@@ -28,7 +28,7 @@ ApplicationWindow {
         Label{
             id: statusBar
             x: 10; y: parent.height /2 - height / 2
-            font.pointSize: 12
+            font.pointSize: 10
             text: tableModel.MsgStatusBar
         }
     }
@@ -46,9 +46,15 @@ ApplicationWindow {
             width: parent.width
             spacing: 10
 
+            Label{
+                y: row1.height / 2 - height / 2
+                font.pointSize: 12
+                Layout.leftMargin: 5
+                text: "Hostname:"
+            }
+
             ComboBox{
                 id: cbxHost
-                x:10
                 width: 200; height: parent.height
                 textRole: "Key"
                 valueRole: "Value"
@@ -84,6 +90,32 @@ ApplicationWindow {
             }
         }
 
+        RowLayout{
+            id: row2
+            height: 25; width: parent.width
+            Layout.maximumHeight: 25
+            spacing: 10
+
+            Label{
+                font.pointSize: 10
+                Layout.leftMargin: 5
+                text: "Custom Query:"
+            }
+
+            TextField{
+                height: parent.height
+                Layout.fillWidth: true
+                font.pointSize: 10
+                rightInset: 5
+                background: Rectangle{
+                    color: "white"
+                    border.width: 1
+                    border.color: "black"
+                }
+                text: "Update " + cbxTabelle.currentText + " Set "
+            }
+        }
+
         HorizontalHeaderView{
             id: horizontalHeader
             syncView: tableView
@@ -92,7 +124,6 @@ ApplicationWindow {
         TableView{
             id: tableView
             width: root.width
-            height: col1.height - row1.height
             Layout.fillHeight: true
             columnSpacing: 1
             rowSpacing: 1
