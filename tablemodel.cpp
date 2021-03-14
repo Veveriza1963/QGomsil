@@ -127,30 +127,54 @@ void TableModel::setConnection(QString Host)
     if(okConnesso){
         setMsgStatusBar("Connessione con Database OK");
         setTabelle(Db.tables());
+        ptrTable = new QSqlTableModel();
     }
+}
+
+void TableModel::setDisconnect()
+{
+    QSqlDatabase::removeDatabase(Db.connectionName());
+    Db.close();
+    setMsgStatusBar("Disconnessione Database");
 }
 
 void TableModel::initModel(QString T)
 {
     beginResetModel();
     Tabella.operator=(T);
-    ptrTable = new QSqlTableModel();
+    Filter = QString("Data = \"%1\"").arg(Data);
+    getNumeroRighe(Filter);
     ptrTable->setTable(Tabella);
     ptrTable->setSort(0, Qt::DescendingOrder);
-    Filter = QString("Data = \"%1\"").arg(Data);
     ptrTable->setFilter(Filter);
-    ptrTable->select();
-    numeroRighe = getNumeroRighe(Filter);
-    setMsgStatusBar("Numero Record Letti " + QString::number(numeroRighe));
+    if(ptrTable->select()){
+        setMsgStatusBar("Numero Record Letti " + QString::number(numeroRighe));
+    }
     endResetModel();
 }
 
-uint32_t TableModel::getNumeroRighe(QString Where)
+void TableModel::setAggiornaRighe(bool On, quint32 Righe)
+{
+    emit layoutAboutToBeChanged();
+    if(On){
+        Filter.operator=("1");
+        getNumeroRighe(Filter);
+        ptrTable->setFilter(Filter);
+        ptrTable->select();
+        setMsgStatusBar("Numero Record Letti " + QString::number(numeroRighe));
+        emit layoutChanged();
+        return;
+    }
+
+    (void) Righe;
+}
+
+void TableModel::getNumeroRighe(QString Where)
 {
     QString Sql = QString("Select Rowid From %1 Where %2").arg(Tabella).arg(Where);
     QSqlQuery Query;
     Query.exec(Sql);
-    return Query.size();
+    numeroRighe = Query.size();
 }
 
 void TableModel::getData()

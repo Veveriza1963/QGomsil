@@ -21,6 +21,24 @@ ApplicationWindow {
                 onTriggered: root.close();
             }
         }
+        Menu{
+            title: "&Azioni"
+            Action{
+                id: actionConnetti
+                text: "&Connetti " + cbxHost.currentText
+                onTriggered: {
+                    tableModel.setConnection(cbxHost.currentText);
+                    cbxTabelle.forceActiveFocus();
+                }
+            }
+            Action{
+                id: actionAggiorna
+                text: "Aggiorna Tabella"
+                onTriggered: {
+                    tableModel.setAggiornaRighe(rbtTutti.checked, spxRighe.value);
+                }
+            }
+        }
     }
     footer: Rectangle{
         height: 25; width: parent.width
@@ -73,10 +91,7 @@ ApplicationWindow {
             Button{
                 width: 200; height: parent.height
                 text: "Connetti a " + cbxHost.currentText
-                onClicked: {
-                    tableModel.setConnection(cbxHost.currentText);
-                    cbxTabelle.forceActiveFocus();
-                }
+                onClicked: actionConnetti.trigger();
             }
 
             ComboBox{
@@ -85,8 +100,27 @@ ApplicationWindow {
                 model: tableModel.Tabelle
                 onActivated: {
                     tableModel.initModel(cbxTabelle.currentText);
-                    tableView.forceLayout();
                 }
+            }
+
+            RadioButton{
+                id: rbtTutti
+                text: "Tutti i Record"
+            }
+
+            SpinBox{
+                id: spxRighe
+                height: parent.height; width: 100
+                editable: true
+                to: 1000000
+                value: 1000
+            }
+
+            Button{
+                id: btnAggiorna
+                height: parent.height; width: 100
+                text: "Aggiorna"
+                onClicked: actionAggiorna.trigger()
             }
         }
 

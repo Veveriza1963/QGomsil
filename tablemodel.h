@@ -29,7 +29,9 @@ public:
 
 public slots:
     void setConnection(QString Host);
+    void setDisconnect();
     void initModel(QString T);
+    void setAggiornaRighe(bool On, quint32 Righe);
 
 signals:
     void MsgStatusBarChanged();
@@ -38,7 +40,7 @@ signals:
 private:
     QString mMsgStatusBar;
     QStringList mTabelle;
-    uint32_t getNumeroRighe(QString Where);
+    void getNumeroRighe(QString Where);
     void getData();
 
 };
