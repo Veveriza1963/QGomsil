@@ -127,7 +127,7 @@ void TableModel::setConnection(QString Host)
     if(okConnesso){
         setMsgStatusBar("Connessione con Database OK");
         setTabelle(Db.tables());
-        ptrTable = new QSqlTableModel();
+        ptrTable = new QSqlTableModel;
     }
 }
 
@@ -140,17 +140,17 @@ void TableModel::setDisconnect()
 
 void TableModel::initModel(QString T)
 {
-    beginResetModel();
+    emit layoutAboutToBeChanged();
     Tabella.operator=(T);
     Filter = QString("Data = \"%1\"").arg(Data);
-    getNumeroRighe(Filter);
+    getNumeroRighe(QString("Where %1").arg(Filter));
     ptrTable->setTable(Tabella);
     ptrTable->setSort(0, Qt::DescendingOrder);
     ptrTable->setFilter(Filter);
     if(ptrTable->select()){
-        setMsgStatusBar("Numero Record Letti " + QString::number(numeroRighe));
+        setMsgStatusBar(QString("Numero Record Letti %1").arg(numeroRighe));
     }
-    endResetModel();
+    emit layoutChanged();
 }
 
 void TableModel::setAggiornaRighe(bool On, quint32 Righe)
@@ -158,21 +158,26 @@ void TableModel::setAggiornaRighe(bool On, quint32 Righe)
     emit layoutAboutToBeChanged();
     if(On){
         Filter.operator=("1");
-        getNumeroRighe(Filter);
+        getNumeroRighe(QString("Where %1").arg(Filter));
         ptrTable->setFilter(Filter);
-        ptrTable->select();
-        setMsgStatusBar("Numero Record Letti " + QString::number(numeroRighe));
+        if(ptrTable->select()){
+            setMsgStatusBar(QString("Numero Record Letti %1").arg(numeroRighe));
+        }
         emit layoutChanged();
         return;
     }
 
-    (void) Righe;
+    QSqlQueryModel *Qm = ptrTable;
+    Qm->setQuery(QSqlQuery(QString("Select * From %1 Order By Rowid Desc Limit %2").arg(Tabella).arg(Righe)));
+    getNumeroRighe(QString("Limit %1").arg(Righe));
+    setMsgStatusBar(QString("Numero Record Letti %1").arg(numeroRighe));
+    emit layoutChanged();
 }
 
 void TableModel::getNumeroRighe(QString Where)
 {
-    QString Sql = QString("Select Rowid From %1 Where %2").arg(Tabella).arg(Where);
     QSqlQuery Query;
+    QString Sql = QString("Select Rowid From %1 %2").arg(Tabella).arg(Where);
     Query.exec(Sql);
     numeroRighe = Query.size();
 }

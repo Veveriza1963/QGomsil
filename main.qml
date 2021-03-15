@@ -35,7 +35,7 @@ ApplicationWindow {
                 id: actionAggiorna
                 text: "Aggiorna Tabella"
                 onTriggered: {
-                    tableModel.setAggiornaRighe(rbtTutti.checked, spxRighe.value);
+                    tableModel.setAggiornaRighe(chxTutti.checked, spxRighe.value);
                 }
             }
         }
@@ -103,8 +103,9 @@ ApplicationWindow {
                 }
             }
 
-            RadioButton{
-                id: rbtTutti
+            CheckBox{
+                id: chxTutti
+                checkState: Qt.Unchecked
                 text: "Tutti i Record"
             }
 
@@ -112,8 +113,8 @@ ApplicationWindow {
                 id: spxRighe
                 height: parent.height; width: 100
                 editable: true
+                from: 1
                 to: 1000000
-                value: 1000
             }
 
             Button{
