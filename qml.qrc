@@ -2,4 +2,7 @@
     <qresource prefix="/">
         <file>main.qml</file>
     </qresource>
+    <qresource prefix="/Images">
+        <file>Button-Round-Reload-Icon.png</file>
+    </qresource>
 </RCC>

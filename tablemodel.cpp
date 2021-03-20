@@ -2,12 +2,15 @@
 #include <QSqlTableModel>
 #include <QSqlRecord>
 #include <QSqlQuery>
+#include <QSqlError>
 #include <QDate>
 #include "tablemodel.h"
 
 QSqlDatabase Db;
 QSqlTableModel *ptrTable;
+QSqlQueryModel *Qm;
 QSqlRecord Record;
+QSqlError Error;
 QString Tabella = "";
 QString Data;
 QString Filter;
@@ -128,6 +131,7 @@ void TableModel::setConnection(QString Host)
         setMsgStatusBar("Connessione con Database OK");
         setTabelle(Db.tables());
         ptrTable = new QSqlTableModel;
+        Qm = ptrTable;
     }
 }
 
@@ -167,17 +171,33 @@ void TableModel::setAggiornaRighe(bool On, quint32 Righe)
         return;
     }
 
-    QSqlQueryModel *Qm = ptrTable;
     Qm->setQuery(QSqlQuery(QString("Select * From %1 Order By Rowid Desc Limit %2").arg(Tabella).arg(Righe)));
     getNumeroRighe(QString("Limit %1").arg(Righe));
     setMsgStatusBar(QString("Numero Record Letti %1").arg(numeroRighe));
     emit layoutChanged();
 }
 
-void TableModel::getNumeroRighe(QString Where)
+void TableModel::setCustomQuery(QString Query)
+{
+    Qm->setQuery(Query);
+    Error = Qm->lastError();
+    if(Error.isValid()){
+        QHash<int, QString>Err;
+        Err.insert(1, "Errore Connessione a Database");
+        Err.insert(2, "Errore Scrittura Query");
+        Err.insert(3, "Errore Transazione" );
+        Err.insert(4, "Errore Sconosciuto");
+
+        setMsgStatusBar(QString("%1 - %2").arg(Error.text()).arg(Err[Error.type()]));
+    } else {
+        setMsgStatusBar("Query Eseguita Correttamente Aggiornare Tabella");
+    }
+}
+
+void TableModel::getNumeroRighe(QString Condition)
 {
     QSqlQuery Query;
-    QString Sql = QString("Select Rowid From %1 %2").arg(Tabella).arg(Where);
+    QString Sql = QString("Select Rowid From %1 %2").arg(Tabella).arg(Condition);
     Query.exec(Sql);
     numeroRighe = Query.size();
 }

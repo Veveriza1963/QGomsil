@@ -13,30 +13,41 @@ ApplicationWindow {
     title: qsTr("QGomsil Tools")
     header: MenuBar{
         Menu{
+            width: 150
             title: "&File"
             Action{
                 id: actionQuit
-                text: "&Quit"
+                text: "&Quit (Ctrl + Q)"
                 shortcut: "Ctrl+Q"
                 onTriggered: root.close();
             }
         }
         Menu{
             title: "&Azioni"
+            width: 250
             Action{
                 id: actionConnetti
-                text: "&Connetti " + cbxHost.currentText
+                text: "&Connetti " + cbxHost.currentText + " (Ctrl + F5)"
+                shortcut: "Ctrl+F5"
                 onTriggered: {
                     tableModel.setConnection(cbxHost.currentText);
+                    cbxTabelle.enabled = true
+                    btnUpdate.enabled = true
+                    btnAggiorna.enabled = true
                     cbxTabelle.forceActiveFocus();
                 }
             }
             Action{
+                id: actionAggiornaData
+                text: "Aggiorna a &Data Odierna (Ctrl + F6)"
+                shortcut: "Ctrl+F6"
+                onTriggered: tableModel.initModel(cbxTabelle.currentText)
+           }
+            Action{
                 id: actionAggiorna
-                text: "Aggiorna Tabella"
-                onTriggered: {
-                    tableModel.setAggiornaRighe(chxTutti.checked, spxRighe.value);
-                }
+                text: "Aggiorna &Righe Tabella (Ctrl + F7)"
+                shortcut: "Ctrl+F7"
+                onTriggered: tableModel.setAggiornaRighe(chxTutti.checked, spxRighe.value);
             }
         }
     }
@@ -50,7 +61,6 @@ ApplicationWindow {
             text: tableModel.MsgStatusBar
         }
     }
-
     ColumnLayout{
         id: col1
         y:10
@@ -70,7 +80,6 @@ ApplicationWindow {
                 Layout.leftMargin: 5
                 text: "Hostname:"
             }
-
             ComboBox{
                 id: cbxHost
                 width: 200; height: parent.height
@@ -87,28 +96,45 @@ ApplicationWindow {
                     }
                 }
             }
-
             Button{
                 width: 200; height: parent.height
                 text: "Connetti a " + cbxHost.currentText
                 onClicked: actionConnetti.trigger();
             }
-
             ComboBox{
                 id: cbxTabelle
-                width: 100; height: parent.height
+                height: parent.height
+                Layout.maximumWidth: 50
+                enabled: false
                 model: tableModel.Tabelle
-                onActivated: {
-                    tableModel.initModel(cbxTabelle.currentText);
+                onActivated: actionAggiornaData.trigger();
+            }
+            Button{
+                id: btnUpdate
+                height: parent.height
+                Layout.maximumWidth: 50
+                enabled: false
+                icon.source: "qrc:/Images/Button-Round-Reload-Icon.png"
+                onClicked: actionAggiornaData.trigger();
+                ToolTip{
+                    visible: btnUpdate.hovered
+                    timeout: 2000
+                    text: "Aggiorna tabella a Data"
                 }
             }
-
+            Rectangle{
+                height: parent.height; width: 3
+                color: "black"
+            }
+            Label{
+                width: 50; height: parent.height
+                text: "Visualizza Record:"
+            }
             CheckBox{
                 id: chxTutti
                 checkState: Qt.Unchecked
                 text: "Tutti i Record"
             }
-
             SpinBox{
                 id: spxRighe
                 height: parent.height; width: 100
@@ -116,15 +142,19 @@ ApplicationWindow {
                 from: 1
                 to: 1000000
             }
-
             Button{
                 id: btnAggiorna
                 height: parent.height; width: 100
+                enabled: false
+                ToolTip{
+                    visible: btnAggiorna.hovered
+                    text: "Aggiorna Righe Tabella"
+                    timeout: 2000
+                }
                 text: "Aggiorna"
                 onClicked: actionAggiorna.trigger()
             }
         }
-
         RowLayout{
             id: row2
             height: 25; width: parent.width
@@ -136,30 +166,32 @@ ApplicationWindow {
                 Layout.leftMargin: 5
                 text: "Custom Query:"
             }
-
             TextField{
+                id: txfQuery
                 height: parent.height
                 Layout.fillWidth: true
                 font.pointSize: 10
                 rightInset: 5
+                placeholderText: "Edit the Update or Delete Query"
                 background: Rectangle{
                     color: "white"
                     border.width: 1
                     border.color: "black"
                 }
-                text: "Update " + cbxTabelle.currentText + " Set "
+                onEditingFinished: tableModel.setCustomQuery(txfQuery.text);
+                onPressed: txfQuery.text = "Update " + cbxTabelle.currentText + " Set "
             }
         }
-
         HorizontalHeaderView{
             id: horizontalHeader
             syncView: tableView
         }
-
         TableView{
             id: tableView
             width: root.width
+            contentWidth: 2100
             Layout.fillHeight: true
+            Layout.bottomMargin: 10
             columnSpacing: 1
             rowSpacing: 1
             clip: true
