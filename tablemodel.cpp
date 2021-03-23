@@ -120,6 +120,18 @@ void TableModel::setTabelle(QStringList Ls)
     emit TabelleChanged();
 }
 
+QStringList TableModel::ListaOperatori()
+{
+    if(!okConnesso) return {};
+    QSqlQuery Query(QString("Select Distinct Operatore From %1 Order By Operatore Asc").arg(Tabella));
+    QStringList Qsl;
+    Qsl.operator<<("Tutti");
+    while (Query.next()) {
+        Qsl.operator<<(Query.value(0).toString());
+    }
+    return Qsl;
+}
+
 void TableModel::setConnection(QString Host)
 { 
     Db = QSqlDatabase::addDatabase("QMARIADB");
@@ -154,12 +166,13 @@ void TableModel::initModel(QString T)
     if(ptrTable->select()){
         setMsgStatusBar(QString("Numero Record Letti %1").arg(numeroRighe));
     }
+    emit ListaOperatoriChanged();
     emit layoutChanged();
 }
 
 void TableModel::setAggiornaRighe(bool On, quint32 Righe)
 {
-    emit layoutAboutToBeChanged();
+    beginResetModel();
     if(On){
         Filter.operator=("1");
         getNumeroRighe(QString("Where %1").arg(Filter));
@@ -167,14 +180,14 @@ void TableModel::setAggiornaRighe(bool On, quint32 Righe)
         if(ptrTable->select()){
             setMsgStatusBar(QString("Numero Record Letti %1").arg(numeroRighe));
         }
-        emit layoutChanged();
+        endResetModel();
         return;
     }
 
     Qm->setQuery(QSqlQuery(QString("Select * From %1 Order By Rowid Desc Limit %2").arg(Tabella).arg(Righe)));
     getNumeroRighe(QString("Limit %1").arg(Righe));
     setMsgStatusBar(QString("Numero Record Letti %1").arg(numeroRighe));
-    emit layoutChanged();
+    endResetModel();
 }
 
 void TableModel::setCustomQuery(QString Query)
@@ -191,6 +204,22 @@ void TableModel::setCustomQuery(QString Query)
         setMsgStatusBar(QString("%1 - %2").arg(Error.text()).arg(Err[Error.type()]));
     } else {
         setMsgStatusBar("Query Eseguita Correttamente Aggiornare Tabella");
+    }
+}
+
+void TableModel::callSearch(QString Data, QString Ope)
+{
+    QString Operatore = (Ope == "Tutti") ? "%" : Ope;
+    QSqlQuery Query;
+    Query.prepare(QString("Select * From %1 Where Operatore Like ? And Data = ? Order By Rowid Desc").arg(Tabella));
+    Query.bindValue(0, Operatore, QSql::Out);
+    Query.bindValue(1, Data, QSql::Out);
+    if(Query.exec()){
+        beginResetModel();
+        numeroRighe = Query.size();
+        Qm->setQuery(Query);
+        setMsgStatusBar(QString("Numero Record Letti %1").arg(numeroRighe));
+        endResetModel();
     }
 }
 

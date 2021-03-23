@@ -49,6 +49,15 @@ ApplicationWindow {
                 shortcut: "Ctrl+F7"
                 onTriggered: tableModel.setAggiornaRighe(chxTutti.checked, spxRighe.value);
             }
+            Action{
+                id: actionSearch
+                text: "A&vvia Ricerca (Ctrl + F8)"
+                shortcut: "Ctrl+F8"
+                onTriggered: {
+                    tableModel.callSearch(txfData.text, cbxOperatori.currentValue);
+                    tableView.positionViewAtRow(0, Qt.AlignTop, 0);
+                }
+            }
         }
     }
     footer: Rectangle{
@@ -98,6 +107,7 @@ ApplicationWindow {
             }
             Button{
                 width: 200; height: parent.height
+                icon.source: "qrc:/Images/Places-Network-Server-Database-Icon.png"
                 text: "Connetti a " + cbxHost.currentText
                 onClicked: actionConnetti.trigger();
             }
@@ -141,11 +151,13 @@ ApplicationWindow {
                 editable: true
                 from: 1
                 to: 1000000
+                value: 10
             }
             Button{
                 id: btnAggiorna
                 height: parent.height; width: 100
                 enabled: false
+                icon.source: "qrc:/Images/Button-Round-Reload-Icon.png"
                 ToolTip{
                     visible: btnAggiorna.hovered
                     text: "Aggiorna Righe Tabella"
@@ -155,6 +167,7 @@ ApplicationWindow {
                 onClicked: actionAggiorna.trigger()
             }
         }
+
         RowLayout{
             id: row2
             height: 25; width: parent.width
@@ -182,6 +195,46 @@ ApplicationWindow {
                 onPressed: txfQuery.text = "Update " + cbxTabelle.currentText + " Set "
             }
         }
+
+        RowLayout{
+            id:row3
+            height: 25; width: parent.width
+            Layout.maximumHeight: 25
+            spacing: 10
+
+            Label{
+                font.pointSize: 10
+                Layout.leftMargin: 5
+                text: "Search:"
+            }
+            TextField{
+                id: txfData
+                height: parent.height
+                rightInset: 5
+                font.pointSize: 10
+                background: Rectangle{
+                    implicitWidth: 150
+                    border.width: 1
+                    border.color: "black"
+                }
+                text: getData()
+            }
+            ComboBox{
+                id: cbxOperatori
+                height: parent.height
+                width: 100
+                model: tableModel.ListaOperatori
+            }
+            Button{
+                id: btnSearch
+                height: parent.height
+                width: 100
+                Layout.maximumWidth: 100
+                icon.source: "qrc:/Images/Search-Icon.png"
+                onClicked: actionSearch.trigger();
+            }
+        }
+
         HorizontalHeaderView{
             id: horizontalHeader
             syncView: tableView
@@ -189,7 +242,6 @@ ApplicationWindow {
         TableView{
             id: tableView
             width: root.width
-            contentWidth: 2100
             Layout.fillHeight: true
             Layout.bottomMargin: 10
             columnSpacing: 1
@@ -212,5 +264,22 @@ ApplicationWindow {
             }
 
         }
+    }
+    function getData(){
+        var d = new Date();
+        var Mese = 0;
+        var i = d.getMonth();
+        switch(i){
+            case 9:
+            case 10:
+            case 11:
+                Mese = ++i
+                break
+            default:
+                Mese = ++i
+                Mese = "0" + Mese
+                break
+        };
+        return d.getDate() + "/" + Mese + "/" + d.getFullYear();
     }
 }

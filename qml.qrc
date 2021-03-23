@@ -4,5 +4,7 @@
     </qresource>
     <qresource prefix="/Images">
         <file>Button-Round-Reload-Icon.png</file>
+        <file>Places-Network-Server-Database-Icon.png</file>
+        <file>Search-Icon.png</file>
     </qresource>
 </RCC>
