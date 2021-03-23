@@ -47,7 +47,10 @@ ApplicationWindow {
                 id: actionAggiorna
                 text: "Aggiorna &Righe Tabella (Ctrl + F7)"
                 shortcut: "Ctrl+F7"
-                onTriggered: tableModel.setAggiornaRighe(chxTutti.checked, spxRighe.value);
+                onTriggered: {
+                    tableModel.setAggiornaRighe(chxTutti.checked, spxRighe.value);
+                    tableView.positionViewAtRow(0, Qt.AlignTop, 0);
+                }
             }
             Action{
                 id: actionSearch
