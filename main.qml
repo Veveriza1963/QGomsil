@@ -62,6 +62,15 @@ ApplicationWindow {
                 }
             }
         }
+        Menu{
+            title: "?"
+            width: 100
+            Action{
+                id: actionAbout
+                text: "About"
+                onTriggered: aboutWindow.visible = true
+            }
+        }
     }
     footer: Rectangle{
         height: 25; width: parent.width
@@ -271,6 +280,12 @@ ApplicationWindow {
 
         }
     }
+
+    About{
+        id: aboutWindow
+        x: root.x; y: root.y
+    }
+
     function getData(){
         var d = new Date();
         var Mese = 0;

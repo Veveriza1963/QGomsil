@@ -1,10 +1,12 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>About.qml</file>
     </qresource>
     <qresource prefix="/Images">
         <file>Button-Round-Reload-Icon.png</file>
         <file>Places-Network-Server-Database-Icon.png</file>
         <file>Search-Icon.png</file>
+        <file>Squirrel-Icon.png</file>
     </qresource>
 </RCC>
