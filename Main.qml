@@ -3,6 +3,7 @@ import QtQuick.Window
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQml
+import Qt.labs.settings
 import TableModel
 
 ApplicationWindow {
@@ -11,6 +12,12 @@ ApplicationWindow {
     width: 1024; height: 768
     visible: true
     title: qsTr("QGomsil Tools")
+
+    Settings{
+        property alias x: root.x
+        property alias y: root.y
+    }
+
     header: MenuBar{
         Menu{
             width: 150

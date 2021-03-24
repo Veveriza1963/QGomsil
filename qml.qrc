@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
+        <file>Main.qml</file>
         <file>About.qml</file>
     </qresource>
     <qresource prefix="/Images">
