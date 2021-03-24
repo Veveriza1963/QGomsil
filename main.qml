@@ -215,6 +215,9 @@ ApplicationWindow {
                 height: parent.height
                 rightInset: 5
                 font.pointSize: 10
+                hoverEnabled: true
+                selectByMouse: true
+                mouseSelectionMode: TextInput.SelectWords
                 background: Rectangle{
                     implicitWidth: 150
                     border.width: 1
