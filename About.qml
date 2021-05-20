@@ -16,13 +16,13 @@ Dialog {
 
         Image {
             id: imageSquirrel
-            anchors.horizontalCenter:  parent.horizontalCenter
+            Layout.alignment: Qt.AlignHCenter
             source: "qrc:/Images/Squirrel-Icon.png"
         }
 
         Label{
             font.pointSize: 12
-            anchors.horizontalCenter: parent.horizontalCenter
+            Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: 10
             text: "Developed by Veveriza"
         }
@@ -30,8 +30,8 @@ Dialog {
         Label{
             font.pointSize: 12
             font.italic: true
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: "Versione 1.8"
+            Layout.alignment: Qt.AlignHCenter
+            text: "Versione 1.10"
         }
     }
 }
