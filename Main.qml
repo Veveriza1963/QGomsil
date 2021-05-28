@@ -48,7 +48,10 @@ ApplicationWindow {
                 id: actionAggiornaData
                 text: "Aggiorna a &Data Odierna (Ctrl + F6)"
                 shortcut: "Ctrl+F6"
-                onTriggered: tableModel.initModel(cbxTabelle.currentText)
+                onTriggered: {
+                    tableModel.initModel(cbxTabelle.currentText);
+                    tableView.positionViewAtRow(0, Qt.AlignTop, 0);
+                }
            }
             Action{
                 id: actionAggiorna
