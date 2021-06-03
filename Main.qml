@@ -299,7 +299,9 @@ ApplicationWindow {
     function getData(){
         var d = new Date();
         var Mese = 0;
+        var Giorno = 0;
         var i = d.getMonth();
+        var g = d.getDate();
         switch(i){
             case 9:
             case 10:
@@ -311,6 +313,23 @@ ApplicationWindow {
                 Mese = "0" + Mese
                 break
         };
-        return d.getDate() + "/" + Mese + "/" + d.getFullYear();
+        switch(g){
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+                Giorno = "0" + g
+                break
+            default:
+                Giorno = g
+                break
+        };
+
+        return Giorno + "/" + Mese + "/" + d.getFullYear();
     }
 }
