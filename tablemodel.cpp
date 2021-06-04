@@ -200,8 +200,7 @@ void TableModel::setCustomQuery(QString Query)
         Err.insert(2, "Errore Scrittura Query");
         Err.insert(3, "Errore Transazione" );
         Err.insert(4, "Errore Sconosciuto");
-
-        setMsgStatusBar(QString("%1 - %2").arg(Error.text()).arg(Err[Error.type()]));
+        setMsgStatusBar(QString("%1 - %2").arg(Error.text(), Error.type()));
     } else {
         setMsgStatusBar("Query Eseguita Correttamente Aggiornare Tabella");
     }
