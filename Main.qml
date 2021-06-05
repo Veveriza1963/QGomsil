@@ -139,7 +139,10 @@ ApplicationWindow {
                 Layout.maximumWidth: 50
                 enabled: false
                 model: tableModel.Tabelle
-                onActivated: actionAggiornaData.trigger();
+                onActivated: {
+                    actionAggiornaData.trigger();
+                    txfQuery.text = "Update " + cbxTabelle.currentText + " Set "
+                }
             }
             Button{
                 id: btnUpdate
@@ -214,7 +217,6 @@ ApplicationWindow {
                     border.color: "black"
                 }
                 onEditingFinished: tableModel.setCustomQuery(txfQuery.text);
-                onPressed: txfQuery.text = "Update " + cbxTabelle.currentText + " Set "
             }
         }
 
