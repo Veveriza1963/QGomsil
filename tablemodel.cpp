@@ -28,6 +28,17 @@ QVariant TableModel::headerData(int section, Qt::Orientation orientation, int ro
 {
     (void) orientation;
     if(role == Qt::DisplayRole){
+        //Se tabella Utenti entra qui...
+        if(Tabella == "Utenti"){
+            switch (section) {
+                case 0: return QVariant("Rowid");
+                case 1: return QVariant("NumID");
+                case 2: return QVariant("NomeIT");
+                case 3: return QVariant("NomeBG");
+                case 4: return QVariant("Job");
+            }
+        }
+        //Se tabella non Utenti qui
         switch (section) {
             case 0: return QVariant("RowID");
             case 1: return QVariant("Data");
@@ -57,7 +68,12 @@ int TableModel::rowCount(const QModelIndex &) const
 
 int TableModel::columnCount(const QModelIndex &) const
 {
-    if(okConnesso) return 14;
+    if(okConnesso){
+        if(Tabella == "Utenti"){
+            return 5;
+        }
+        return 14;
+    }
     return 0;
 }
 
@@ -156,8 +172,19 @@ void TableModel::setDisconnect()
 
 void TableModel::initModel(QString T)
 {
-    emit layoutAboutToBeChanged();
     Tabella.operator=(T);
+    emit layoutAboutToBeChanged();
+    //Init con tabella Utenti
+    if(Tabella == "Utenti"){
+        getNumeroRighe("");
+        ptrTable->setTable(Tabella);
+        ptrTable->setSort(2,Qt::AscendingOrder);
+        ptrTable->select();
+        emit layoutChanged();
+        setMsgStatusBar(QString("Numero Record Letti %1").arg(numeroRighe));
+        return;
+    }
+    //Se Tabella non Utenti
     Filter = QString("Data = \"%1\"").arg(Data);
     getNumeroRighe(QString("Where %1").arg(Filter));
     ptrTable->setTable(Tabella);
@@ -225,7 +252,7 @@ void TableModel::callSearch(QString Data, QString Ope)
 void TableModel::getNumeroRighe(QString Condition)
 {
     QSqlQuery Query;
-    QString Sql = QString("Select Rowid From %1 %2").arg(Tabella).arg(Condition);
+    QString Sql = QString("Select Rowid From %1 %2").arg(Tabella, Condition);
     Query.exec(Sql);
     numeroRighe = Query.size();
 }

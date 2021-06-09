@@ -136,7 +136,7 @@ ApplicationWindow {
             ComboBox{
                 id: cbxTabelle
                 height: parent.height
-                Layout.maximumWidth: 50
+                Layout.maximumWidth: 65
                 enabled: false
                 model: tableModel.Tabelle
                 onActivated: {
