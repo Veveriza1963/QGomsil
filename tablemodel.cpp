@@ -210,7 +210,6 @@ void TableModel::setAggiornaRighe(bool On, quint32 Righe)
         endResetModel();
         return;
     }
-
     Qm->setQuery(QSqlQuery(QString("Select * From %1 Order By Rowid Desc Limit %2").arg(Tabella).arg(Righe)));
     getNumeroRighe(QString("Limit %1").arg(Righe));
     setMsgStatusBar(QString("Numero Record Letti %1").arg(numeroRighe));
@@ -219,7 +218,7 @@ void TableModel::setAggiornaRighe(bool On, quint32 Righe)
 
 void TableModel::setCustomQuery(QString Query)
 {
-    Qm->setQuery(Query);
+    Qm->setQuery(QSqlQuery(Query));
     Error = Qm->lastError();
     if(Error.isValid()){
         QHash<int, QString>Err;
@@ -235,18 +234,16 @@ void TableModel::setCustomQuery(QString Query)
 
 void TableModel::callSearch(QString Data, QString Ope)
 {
+    beginResetModel();
     QString Operatore = (Ope == "Tutti") ? "%" : Ope;
-    QSqlQuery Query;
-    Query.prepare(QString("Select * From %1 Where Operatore Like ? And Data = ? Order By Rowid Desc").arg(Tabella));
-    Query.bindValue(0, Operatore, QSql::Out);
-    Query.bindValue(1, Data, QSql::Out);
-    if(Query.exec()){
-        beginResetModel();
-        numeroRighe = Query.size();
-        Qm->setQuery(Query);
-        setMsgStatusBar(QString("Numero Record Letti %1").arg(numeroRighe));
-        endResetModel();
-    }
+    QString Filter = QString("Operatore Like '%1' And Data = '%2'").arg(Operatore, Data);
+    getNumeroRighe(QString("Where ").operator+=(Filter));
+    ptrTable->setTable(Tabella);
+    ptrTable->setFilter(Filter);
+    ptrTable->setSort(0, Qt::DescendingOrder);
+    ptrTable->select();
+    setMsgStatusBar(QString("Numero Record Letti %1").arg(numeroRighe));
+    endResetModel();
 }
 
 void TableModel::getNumeroRighe(QString Condition)
