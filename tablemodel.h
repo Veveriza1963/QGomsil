@@ -47,7 +47,6 @@ private:
     QStringList mTabelle;
     void getNumeroRighe(QString Condition);
     void getData();
-
 };
 
 #endif // TABLEMODEL_H
