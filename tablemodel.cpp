@@ -133,6 +133,7 @@ QStringList TableModel::Tabelle()
 void TableModel::setTabelle(QStringList Ls)
 {
     mTabelle.operator=(Ls);
+    mTabelle.sort();
     emit TabelleChanged();
 }
 

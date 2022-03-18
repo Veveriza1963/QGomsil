@@ -31,7 +31,7 @@ Dialog {
             font.pointSize: 12
             font.italic: true
             Layout.alignment: Qt.AlignHCenter
-            text: "Versione 2.1"
+            text: "Versione 2.2"
         }
     }
 }
